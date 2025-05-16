@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Schema Clinica Medicala",
+    "description": "Schema pentru validarea datelor despre consultatii la o clinica",
+    "type": "object",
+    "properties": {
+      "clinica": {
+        "type": "object",
+        "properties": {
+          "pacienti": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/Pacient" }
+          },
+          "medici": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/Medic" }
+          },
+          "consultatii": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/Consultatie" }
+          }
+        },
+        "required": ["pacienti", "medici", "consultatii"]
+      }
+    },
+    "required": ["clinica"],
+    "definitions": {
+      "Pacient": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^P\\d{3}$" },
+          "nume": { "type": "string", "minLength": 1 },
+          "prenume": { "type": "string", "minLength": 1 },
+          "dataNasterii": { "type": "string", "format": "date" },
+          "telefon": { "type": "string" }
+        },
+        "required": ["id", "nume", "prenume", "dataNasterii"]
+      },
+      "Medic": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^M\\d{3}$" },
+          "nume": { "type": "string" },
+          "prenume": { "type": "string" },
+          "specializare": {
+            "type": "string",
+            "enum": ["Cardiologie", "Dermatologie", "Pediatrie", "Medicina Interna", "General"]
+          }
+        },
+        "required": ["id", "nume", "prenume", "specializare"]
+      },
+       "Medicament": {
+          "type": "object",
+          "properties": {
+              "nume": { "type": "string" },
+              "doza": { "type": "string" }
+          },
+          "required": ["nume"]
+       },
+       "Tratament": {
+          "type": "object",
+          "properties": {
+              "indicatii": { "type": "string" },
+              "medicamente": {
+                  "type": "array",
+                  "items": { "$ref": "#/definitions/Medicament" }
+              }
+          },
+          "required": ["indicatii"]
+       },
+       "Diagnostic": {
+           "type": "object",
+           "properties": {
+              "codICD10": { "type": "string" },
+              "descriere": { "type": "string" }
+           },
+           "required": ["codICD10", "descriere"]
+       },
+      "Consultatie": {
+        "type": "object",
+        "properties": {
+          "id_consultatie": { "type": "string", "pattern": "^C\\d{3}$" },
+          "id_pacient_ref": { "type": "string", "pattern": "^P\\d{3}$" },
+          "id_medic_ref": { "type": "string", "pattern": "^M\\d{3}$" },
+          "data": { "type": "string", "format": "date" },
+          "ora": { "type": "string", "format": "time" },
+          "simptome": { "type": "string" },
+          "diagnostic": { "$ref": "#/definitions/Diagnostic" },
+          "tratament": { "$ref": "#/definitions/Tratament" }
+        },
+        "required": [
+          "id_consultatie",
+          "id_pacient_ref",
+          "id_medic_ref",
+          "data",
+          "ora",
+          "simptome",
+          "diagnostic",
+          "tratament"
+        ]
+      }
+    }
+  }

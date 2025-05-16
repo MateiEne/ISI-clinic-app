@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Clinica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="consultatii.xsd">
+  <Pacienti>
+    <Pacient id="P001">
+      <Nume>Popescu</Nume>
+      <Prenume>Ion</Prenume>
+      <DataNasterii>1980-05-15</DataNasterii>
+      <Telefon>0722000111</Telefon>
+    </Pacient>
+    <Pacient id="P002">
+      <Nume>Marinescu</Nume>
+      <Prenume>Ana</Prenume>
+      <DataNasterii>1992-11-20</DataNasterii>
+      <Telefon>0745999888</Telefon>
+    </Pacient>
+  </Pacienti>
+  <Medici>
+    <Medic id="M001">
+      <Nume>Ionescu</Nume>
+      <Prenume>Maria</Prenume>
+      <Specializare>Cardiologie</Specializare>
+    </Medic>
+    <Medic id="M002">
+      <Nume>Vasilescu</Nume>
+      <Prenume>Andrei</Prenume>
+      <Specializare>Dermatologie</Specializare>
+    </Medic>
+  </Medici>
+  <Consultatii>
+    <Consultatie id_consultatie="C001" id_pacient_ref="P001" id_medic_ref="M001">
+      <Data>2023-10-27</Data>
+      <Ora>10:30:00</Ora>
+      <!-- inainte era 10:30 si xsd dadea fail la validare pentru ca foramtul cerut de xs:time cere hh::mm::ss => am pus si secundele si a mers -->
+      <Simptome>Durere toracică, palpitații</Simptome>
+      <Diagnostic>
+        <CodICD10>I20.9</CodICD10>
+        <Descriere>Angina pectorală, nespecificată</Descriere>
+      </Diagnostic>
+      <Tratament>
+        <Indicatii>Repaus, control tensiune, EKG</Indicatii>
+        <Medicamente>
+          <Medicament nume="Aspirin Cardio" doza="100mg"/>
+          <Medicament nume="Metoprolol" doza="50mg"/>
+        </Medicamente>
+      </Tratament>
+    </Consultatie>
+    <Consultatie id_consultatie="C002" id_pacient_ref="P002" id_medic_ref="M002">
+      <Data>2023-11-15</Data>
+      <Ora>14:00:00</Ora>
+      <Simptome>Erupție cutanată pruriginoasă</Simptome>
+      <Diagnostic>
+        <CodICD10>L20.8</CodICD10>
+        <Descriere>Dermatită atopică, altă</Descriere>
+      </Diagnostic>
+      <Tratament>
+        <Indicatii>Cremă hidratantă, evită iritanții</Indicatii>
+        <!-- Fără medicamente specifice prescrise -->
+      </Tratament>
+    </Consultatie>
+    <Consultatie id_consultatie="C003" id_pacient_ref="P001" id_medic_ref="M001">
+      <Data>2024-01-20</Data>
+      <Ora>09:00:00</Ora>
+      <Simptome>Control periodic</Simptome>
+      <Diagnostic>
+        <CodICD10>Z00.0</CodICD10>
+        <Descriere>Examinare medicală generală</Descriere>
+      </Diagnostic>
+      <Tratament>
+        <Indicatii>Continuare tratament existent</Indicatii>
+      </Tratament>
+    </Consultatie>
+  </Consultatii>
+</Clinica>

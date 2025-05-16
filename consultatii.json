@@ -1,0 +1,93 @@
+{
+  "clinica": {
+    "pacienti": [
+      {
+        "id": "P001",
+        "nume": "Popescu",
+        "prenume": "Ion",
+        "dataNasterii": "1980-05-15",
+        "telefon": "0722000111"
+      },
+      {
+        "id": "P002",
+        "nume": "Marinescu",
+        "prenume": "Ana",
+        "dataNasterii": "1992-11-20",
+        "telefon": "0745999888"
+      }
+    ],
+    "medici": [
+      {
+        "id": "M001",
+        "nume": "Ionescu",
+        "prenume": "Maria",
+        "specializare": "Cardiologie"
+      },
+      {
+        "id": "M002",
+        "nume": "Vasilescu",
+        "prenume": "Andrei",
+        "specializare": "Dermatologie"
+      }
+    ],
+    "consultatii": [
+      {
+        "id_consultatie": "C001",
+        "id_pacient_ref": "P001",
+        "id_medic_ref": "M001",
+        "data": "2023-10-27",
+        "ora": "10:30:00",
+        "simptome": "Durere toracică, palpitații",
+        "diagnostic": {
+          "codICD10": "I20.9",
+          "descriere": "Angina pectorală, nespecificată"
+        },
+        "tratament": {
+          "indicatii": "Repaus, control tensiune, EKG",
+          "medicamente": [
+            {
+              "nume": "Aspirin Cardio",
+              "doza": "100mg"
+            },
+            {
+              "nume": "Metoprolol",
+              "doza": "50mg"
+            }
+          ]
+        }
+      },
+      {
+        "id_consultatie": "C002",
+        "id_pacient_ref": "P002",
+        "id_medic_ref": "M002",
+        "data": "2023-11-15",
+        "ora": "14:00:00",
+        "simptome": "Erupție cutanată pruriginoasă",
+        "diagnostic": {
+          "codICD10": "L20.8",
+          "descriere": "Dermatită atopică, altă"
+        },
+        "tratament": {
+          "indicatii": "Cremă hidratantă, evită iritanții",
+          "medicamente": []
+        }
+      },
+      {
+        "id_consultatie": "C003",
+        "id_pacient_ref": "P001",
+        "id_medic_ref": "M001",
+        "data": "2024-01-20",
+        "ora": "09:00:00",
+        "simptome": "Control periodic",
+        "diagnostic": {
+          "codICD10": "Z00.0",
+          "descriere": "Examinare medicală generală"
+        },
+        "tratament": {
+          "indicatii": "Continuare tratament existent",
+          "medicamente": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,141 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Simple Types with Restrictions -->
+  <xs:simpleType name="IDPacientType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="P\d{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="IDMedicType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="M\d{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+   <xs:simpleType name="IDConsultatieType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="C\d{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SpecializareType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Cardiologie"/>
+      <xs:enumeration value="Dermatologie"/>
+      <xs:enumeration value="Pediatrie"/>
+      <xs:enumeration value="Medicina Interna"/>
+      <xs:enumeration value="General"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Complex Types -->
+  <xs:complexType name="PacientType">
+    <xs:sequence>
+      <xs:element name="Nume" type="xs:string"/>
+      <xs:element name="Prenume" type="xs:string"/>
+      <xs:element name="DataNasterii" type="xs:date"/>
+      <xs:element name="Telefon" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IDPacientType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="MedicType">
+    <xs:sequence>
+      <xs:element name="Nume" type="xs:string"/>
+      <xs:element name="Prenume" type="xs:string"/>
+      <xs:element name="Specializare" type="SpecializareType"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IDMedicType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="MedicamentType">
+     <xs:attribute name="nume" type="xs:string" use="required"/>
+     <xs:attribute name="doza" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+   <xs:complexType name="TratamentType">
+     <xs:sequence>
+        <xs:element name="Indicatii" type="xs:string"/>
+        <xs:element name="Medicamente" minOccurs="0">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="Medicament" type="MedicamentType" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+     </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="DiagnosticType">
+     <xs:sequence>
+        <xs:element name="CodICD10" type="xs:string"/>
+        <xs:element name="Descriere" type="xs:string"/>
+     </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="ConsultatieType">
+     <xs:sequence>
+        <xs:element name="Data" type="xs:date"/>
+        <xs:element name="Ora" type="xs:time"/>
+        <xs:element name="Simptome" type="xs:string"/>
+        <xs:element name="Diagnostic" type="DiagnosticType"/>
+        <xs:element name="Tratament" type="TratamentType"/>
+     </xs:sequence>
+     <xs:attribute name="id_consultatie" type="IDConsultatieType" use="required"/>
+     <xs:attribute name="id_pacient_ref" type="IDPacientType" use="required"/>
+     <xs:attribute name="id_medic_ref" type="IDMedicType" use="required"/>
+   </xs:complexType>
+
+  <!-- Root Element Definition -->
+  <xs:element name="Clinica">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Pacienti">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Pacient" type="PacientType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Medici">
+           <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Medic" type="MedicType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Consultatii">
+           <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Consultatie" type="ConsultatieType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+     <!-- Define keys and key references for integrity -->
+     <xs:key name="PacientKey">
+        <xs:selector xpath=".//Pacient"/>
+        <xs:field xpath="@id"/>
+    </xs:key>
+     <xs:key name="MedicKey">
+        <xs:selector xpath=".//Medic"/>
+        <xs:field xpath="@id"/>
+    </xs:key>
+     <xs:key name="ConsultatieKey">
+        <xs:selector xpath=".//Consultatie"/>
+        <xs:field xpath="@id_consultatie"/>
+    </xs:key>
+
+    <xs:keyref name="PacientRef" refer="PacientKey">
+        <xs:selector xpath=".//Consultatie"/>
+        <xs:field xpath="@id_pacient_ref"/>
+    </xs:keyref>
+    <xs:keyref name="MedicRef" refer="MedicKey">
+        <xs:selector xpath=".//Consultatie"/>
+        <xs:field xpath="@id_medic_ref"/>
+    </xs:keyref>
+  </xs:element>
+
+</xs:schema>
