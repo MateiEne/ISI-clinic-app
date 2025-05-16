@@ -1,4 +1,4 @@
-# --- START OF FILE clinic_app.py ---
+#--- START OF FILE clinic_app.py ---
 
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, simpledialog
@@ -8,9 +8,8 @@ from lxml import etree # Librarie puternica pentru a lucra cu fisiere XML, XSD (
 import os # Pentru a lucra cu cai de fisiere (nume fisier, etc.)
 import webbrowser # Pentru a deschide fisiere HTML in browser
 import traceback # Pentru afisarea erorilor detaliate
-import re # Adaugat pentru extragerea ID-ului medicului din Combobox
 
-# --- Nume Fisiere Implicite ---
+#--- Nume Fisiere Implicite ---
 DEFAULT_XML = "consultatii.xml"
 DEFAULT_XSD = "consultatii.xsd"
 DEFAULT_JSON = "consultatii.json"
@@ -23,7 +22,7 @@ class ClinicApp:
         self.root = root
         self.root.title("Evidenta Consultatii Clinica")
         self.root.geometry("1000x750") # Am marit putin fereastra
-
+    
         self.xml_tree = None
         self.json_data = None
         self.xml_file_path = DEFAULT_XML
@@ -38,7 +37,7 @@ class ClinicApp:
         self.controls_frame = ttk.Frame(self.paned_window, padding="10")
         self.paned_window.add(self.controls_frame, weight=0)
 
-        # --- Butoane de Control ---
+        # --- Butoane de Control (Identice ca inainte) ---
         self.load_xml_button = ttk.Button(self.controls_frame, text="Incarca XML", command=self.load_xml)
         self.load_xml_button.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
         self.validate_xsd_button = ttk.Button(self.controls_frame, text="Valideaza XML (XSD)", command=self.validate_xsd, state=tk.DISABLED)
@@ -70,7 +69,7 @@ class ClinicApp:
             {"#0": ("ID Consultatie", 120), "col1": ("Data", 100), "col2": ("Ora", 80), "col3": ("ID Pacient", 100), "col4": ("ID Medic", 100), "col5": ("Simptome", 150), "col6": ("Diagnostic", 200), "col7": ("Tratament", 200)}
         )
 
-        # --- Frame-ul de Jos pentru CRUD si Status ---
+        # --- Frame-ul de Jos pentru CRUD si Status (Identic ca inainte, dar CRUD e pt Consultatii) ---
         self.bottom_frame = ttk.Frame(self.paned_window, padding="10")
         self.paned_window.add(self.bottom_frame, weight=0)
 
@@ -96,9 +95,13 @@ class ClinicApp:
         tab_frame = ttk.Frame(self.notebook, padding="5")
         self.notebook.add(tab_frame, text=tab_name)
 
-        tree = ttk.Treeview(tab_frame)
+        tree = ttk.Treeview(tab_frame) # Nu mai folosim `show="tree headings"` aici, fiecare e un tabel plat
         
         # Definirea coloanelor pe baza configuratiei primite
+        # `columns_config` este un dictionar de forma:
+        # {'id_intern_col': ('Nume Afisat Col', LatimeCol), ...}
+        # '#0' este pentru prima coloana (cea cu iid-ul)
+        
         tree_cols = [key for key in columns_config if key != "#0"]
         tree["columns"] = tuple(tree_cols)
 
@@ -109,7 +112,7 @@ class ClinicApp:
         for col_id in tree_cols:
             col_info = columns_config[col_id]
             tree.heading(col_id, text=col_info[0])
-            tree.column(col_id, anchor=tk.W, width=col_info[1], stretch=tk.YES)
+            tree.column(col_id, anchor=tk.W, width=col_info[1], stretch=tk.YES) # stretch=YES permite redimensionarea
 
         tree_ysb = ttk.Scrollbar(tab_frame, orient=tk.VERTICAL, command=tree.yview)
         tree_xsb = ttk.Scrollbar(tab_frame, orient=tk.HORIZONTAL, command=tree.xview)
@@ -119,9 +122,9 @@ class ClinicApp:
         tree_xsb.pack(side=tk.BOTTOM, fill=tk.X)
         tree.pack(fill=tk.BOTH, expand=True)
         
-        return tree
+        return tree # Returneaza instanta Treeview creata
 
-    # --- Gestiunea Fisierelor ---
+    # --- Gestiunea Fisierelor (load_xml, load_json, save_changes - majoritar identice) ---
     def load_xml(self):
         self.clear_all_displays() # Goleste toate Treeview-urile
         filepath = filedialog.askopenfilename(
@@ -136,10 +139,9 @@ class ClinicApp:
             parser = etree.XMLParser(remove_blank_text=True)
             self.xml_tree = etree.parse(filepath, parser)
             self.xml_file_path = filepath
-            self.json_data = None # Reseteaza datele JSON daca se incarca XML
+            self.json_data = None
             self.populate_all_trees_from_xml() # Populeaza toate Treeview-urile
             self.update_status(f"Fisier XML incarcat: {os.path.basename(filepath)}")
-            # Activeaza/dezactiveaza butoanele corespunzatoare
             self.validate_xsd_button.config(state=tk.NORMAL)
             self.show_xslt_button.config(state=tk.NORMAL)
             self.validate_json_button.config(state=tk.DISABLED)
@@ -156,16 +158,16 @@ class ClinicApp:
             self.xml_tree = None
             self.update_status("Eroare la incarcare XML.")
         except Exception as e:
-             messagebox.showerror("Eroare Necunoscuta", f"A aparut o eroare la incarcarea XML:\n{e}")
-             self.xml_tree = None
-             self.update_status("Eroare la incarcare XML.")
+            messagebox.showerror("Eroare Necunoscuta", f"A aparut o eroare la incarcarea XML:\n{e}")
+            self.xml_tree = None
+            self.update_status("Eroare la incarcare XML.")
 
     def load_json(self):
         self.clear_all_displays()
         filepath = filedialog.askopenfilename(
             title="Selecteaza fisier JSON",
             filetypes=[("JSON Files", "*.json"), ("All Files", "*.*")],
-             initialfile=self.json_file_path
+            initialfile=self.json_file_path
         )
         if not filepath:
             self.update_status("Incarcare JSON anulata.")
@@ -174,10 +176,9 @@ class ClinicApp:
             with open(filepath, 'r', encoding='utf-8') as f:
                 self.json_data = json.load(f)
             self.json_file_path = filepath
-            self.xml_tree = None # Reseteaza arborele XML daca se incarca JSON
+            self.xml_tree = None
             self.populate_all_trees_from_json() # Populeaza toate Treeview-urile
             self.update_status(f"Fisier JSON incarcat: {os.path.basename(filepath)}")
-            # Activeaza/dezactiveaza butoanele corespunzatoare
             self.validate_json_button.config(state=tk.NORMAL)
             self.validate_xsd_button.config(state=tk.DISABLED)
             self.show_xslt_button.config(state=tk.DISABLED)
@@ -194,11 +195,12 @@ class ClinicApp:
             self.json_data = None
             self.update_status("Eroare la incarcare JSON.")
         except Exception as e:
-             messagebox.showerror("Eroare Necunoscuta", f"A aparut o eroare la incarcarea JSON:\n{e}")
-             self.json_data = None
-             self.update_status("Eroare la incarcare JSON.")
+            messagebox.showerror("Eroare Necunoscuta", f"A aparut o eroare la incarcarea JSON:\n{e}")
+            self.json_data = None
+            self.update_status("Eroare la incarcare JSON.")
 
     def save_changes(self):
+        # Functia de salvare ramane la fel, modifica self.xml_tree sau self.json_data
         if self.xml_tree is not None and self.xml_file_path:
             try:
                 self.xml_tree.write(self.xml_file_path, pretty_print=True, xml_declaration=True, encoding='UTF-8')
@@ -217,8 +219,8 @@ class ClinicApp:
                 messagebox.showerror("Eroare Salvare JSON", f"Nu s-a putut salva fisierul JSON:\n{e}")
                 self.update_status("Eroare la salvare JSON.")
         else:
-             messagebox.showwarning("Salvare Imposibila", "Niciun fisier XML sau JSON nu este incarcat pentru a salva.")
-             self.update_status("Salvare esuata - niciun fisier incarcat.")
+            messagebox.showwarning("Salvare Imposibila", "Niciun fisier XML sau JSON nu este incarcat pentru a salva.")
+            self.update_status("Salvare esuata - niciun fisier incarcat.")
 
     # --- Afisare/Populare Treeview-uri ---
     def clear_tree_items(self, tree_widget):
@@ -232,7 +234,6 @@ class ClinicApp:
         self.clear_tree_items(self.medici_tree)
         self.clear_tree_items(self.consultatii_tree)
         
-        # Reseteaza datele si starea butoanelor
         self.xml_tree = None
         self.json_data = None
         self.validate_xsd_button.config(state=tk.DISABLED)
@@ -286,6 +287,7 @@ class ClinicApp:
             trat_ind = consult.xpath('./Tratament/Indicatii/text()')[0] if consult.xpath('./Tratament/Indicatii/text()') else ''
             meds = [f"{med.get('nume', '')}({med.get('doza', 'N/A')})" for med in consult.xpath('./Tratament/Medicamente/Medicament')]
             trat_str = f"Indicatii: {trat_ind}" + (f" | Meds: {', '.join(meds)}" if meds else "")
+            # Folosim cid ca iid pentru a putea sterge/cauta consultatii
             self.consultatii_tree.insert("", tk.END, iid=cid, text=cid, values=(data, ora, pid_ref, mid_ref, simptome, diag_str, trat_str))
 
     def populate_all_trees_from_json(self):
@@ -334,19 +336,19 @@ class ClinicApp:
             trat_str = f"Indicatii: {trat_ind}" + (f" | Meds: {', '.join(meds)}" if meds else "")
             self.consultatii_tree.insert("", tk.END, iid=cid, text=cid, values=(data, ora, pid_ref, mid_ref, simptome, diag_str, trat_str))
 
-    # --- Validare ---
+    # --- Validare (Identica) ---
     def validate_xsd(self):
         if self.xml_tree is None:
             messagebox.showwarning("Validare Imposibila", "Niciun fisier XML nu este incarcat.")
             return
         xsd_path = DEFAULT_XSD
         if not os.path.exists(xsd_path):
-             xsd_path_ask = filedialog.askopenfilename(
+            xsd_path_ask = filedialog.askopenfilename(
                 title="Selecteaza fisier XSD", filetypes=[("XSD Schema Files", "*.xsd"), ("All Files", "*.*")], initialfile=DEFAULT_XSD)
-             if not xsd_path_ask:
-                 self.update_status("Validare XSD anulata - schema lipsa.")
-                 return
-             xsd_path = xsd_path_ask
+            if not xsd_path_ask:
+                self.update_status("Validare XSD anulata - schema lipsa.")
+                return
+            xsd_path = xsd_path_ask
         try:
             xmlschema_doc = etree.parse(xsd_path)
             xmlschema = etree.XMLSchema(xmlschema_doc)
@@ -360,8 +362,8 @@ class ClinicApp:
             messagebox.showerror("Validare XSD Esuata", f"Fisierul XML NU este valid:\n{e}")
             self.update_status("XML Invalid (XSD).")
         except FileNotFoundError:
-             messagebox.showerror("Eroare Fisier", f"Fisierul XSD nu a fost gasit:\n{xsd_path}")
-             self.update_status("Validare XSD esuata - schema lipsa.")
+            messagebox.showerror("Eroare Fisier", f"Fisierul XSD nu a fost gasit:\n{xsd_path}")
+            self.update_status("Validare XSD esuata - schema lipsa.")
         except Exception as e:
             messagebox.showerror("Eroare Necunoscuta", f"A aparut o eroare la validarea XSD:\n{e}")
             self.update_status("Eroare validare XSD.")
@@ -389,28 +391,28 @@ class ClinicApp:
             messagebox.showerror("Validare JSON Esuata", f"Fiierul JSON NU este valid:\n{error_details}")
             self.update_status("JSON Invalid (Schema).")
         except json.JSONDecodeError as e:
-             messagebox.showerror("Eroare Schema JSON", f"Schema JSON este invalida sau nu a putut fi parsata:\n{e}")
-             self.update_status("Eroare la parsarea schemei JSON.")
+            messagebox.showerror("Eroare Schema JSON", f"Schema JSON este invalida sau nu a putut fi parsata:\n{e}")
+            self.update_status("Eroare la parsarea schemei JSON.")
         except FileNotFoundError:
-             messagebox.showerror("Eroare Fisier", f"Fisierul JSON Schema nu a fost gasit:\n{schema_path}")
-             self.update_status("Validare JSON esuata - schema lipsa.")
+            messagebox.showerror("Eroare Fisier", f"Fisierul JSON Schema nu a fost gasit:\n{schema_path}")
+            self.update_status("Validare JSON esuata - schema lipsa.")
         except Exception as e:
             messagebox.showerror("Eroare Necunoscuta", f"A aparut o eroare la validarea JSON:\n{e}")
             self.update_status("Eroare validare JSON.")
 
-    # --- Transformare XSLT ---
+    # --- Transformare XSLT (Identica) ---
     def display_xslt(self):
         if self.xml_tree is None:
             messagebox.showwarning("Transformare Imposibila", "Niciun fisier XML nu este incarcat.")
             return
         xsl_path = DEFAULT_XSL
         if not os.path.exists(xsl_path):
-             xsl_path_ask = filedialog.askopenfilename(
+            xsl_path_ask = filedialog.askopenfilename(
                 title="Selecteaza fisier XSLT", filetypes=[("XSLT Stylesheet Files", "*.xsl;*.xslt"), ("All Files", "*.*")], initialfile=DEFAULT_XSL)
-             if not xsl_path_ask:
-                 self.update_status("Transformare XSLT anulata - fisier lipsa.")
-                 return
-             xsl_path = xsl_path_ask
+            if not xsl_path_ask:
+                self.update_status("Transformare XSLT anulata - fisier lipsa.")
+                return
+            xsl_path = xsl_path_ask
         try:
             xslt_doc = etree.parse(xsl_path)
             transformer = etree.XSLT(xslt_doc)
@@ -421,20 +423,20 @@ class ClinicApp:
             webbrowser.open(f'file://{os.path.realpath(HTML_OUTPUT)}')
             self.update_status(f"Rezultat XSLT salvat in {HTML_OUTPUT} si deschis.")
         except etree.XSLTParseError as e:
-             messagebox.showerror("Eroare XSLT", f"Fisierul XSLT este invalid sau nu a putut fi parsat:\n{e}")
-             self.update_status("Eroare la parsarea XSLT.")
+            messagebox.showerror("Eroare XSLT", f"Fisierul XSLT este invalid sau nu a putut fi parsat:\n{e}")
+            self.update_status("Eroare la parsarea XSLT.")
         except etree.XSLTApplyError as e:
-             messagebox.showerror("Eroare Aplicare XSLT", f"Eroare la aplicarea transformarii XSLT:\n{e}")
-             self.update_status("Eroare la aplicarea XSLT.")
+            messagebox.showerror("Eroare Aplicare XSLT", f"Eroare la aplicarea transformarii XSLT:\n{e}")
+            self.update_status("Eroare la aplicarea XSLT.")
         except FileNotFoundError:
-             messagebox.showerror("Eroare Fisier", f"Fisierul XSLT nu a fost gasit:\n{xsl_path}")
-             self.update_status("Transformare XSLT esuata - fisier lipsa.")
+            messagebox.showerror("Eroare Fisier", f"Fisierul XSLT nu a fost gasit:\n{xsl_path}")
+            self.update_status("Transformare XSLT esuata - fisier lipsa.")
         except Exception as e:
             messagebox.showerror("Eroare Necunoscuta", f"A aparut o eroare la transformarea XSLT:\n{e}")
             self.update_status("Eroare transformare XSLT.")
 
-    # --- Operatii CRUD (pentru Consultatii) ---
-    def find_next_consultation_id(self):
+    # --- Operatii CRUD (Raman axate pe Consultatii pentru simplitate) ---
+    def find_next_consultation_id(self): # Identica
         max_id_num = 0
         if self.xml_tree is not None:
             ids = self.xml_tree.xpath('//Consultatie/@id_consultatie')
@@ -442,213 +444,86 @@ class ClinicApp:
                 try: num = int(id_val[1:]); max_id_num = max(max_id_num, num)
                 except ValueError: continue
         elif self.json_data is not None:
-             consultations = self.json_data.get('clinica', {}).get('consultatii', [])
-             for consult in consultations:
-                 id_val = consult.get('id_consultatie')
-                 if id_val and id_val.startswith('C'):
+            consultations = self.json_data.get('clinica', {}).get('consultatii', [])
+            for consult in consultations:
+                id_val = consult.get('id_consultatie')
+                if id_val and id_val.startswith('C'):
                     try: num = int(id_val[1:]); max_id_num = max(max_id_num, num)
                     except ValueError: continue
         return f"C{max_id_num + 1:03d}"
 
-    def get_medic_choices(self):
-        # Functie helper pentru a obtine lista de medici formatata pentru Combobox
-        medic_choices = []
-        if self.xml_tree is not None:
-            root_element = self.xml_tree.getroot()
-            if root_element is not None:
-                # Itereaza prin elementele Medic din XML
-                for medic in root_element.xpath('//Medic'):
-                    mid = medic.get('id', 'N/A')
-                    nume = medic.findtext('Nume', default='')
-                    prenume = medic.findtext('Prenume', default='')
-                    if mid != 'N/A' and (nume or prenume): # Asigura ca medicul are ID si nume/prenume
-                        medic_choices.append(f"{nume} {prenume} ({mid})")
-        elif self.json_data is not None:
-            clinica_data = self.json_data.get('clinica', {})
-            # Itereaza prin dictionarele medicilor din JSON
-            for medic in clinica_data.get('medici', []):
-                mid = medic.get('id', 'N/A')
-                nume = medic.get('nume', '')
-                prenume = medic.get('prenume', '')
-                if mid != 'N/A' and (nume or prenume): # Asigura ca medicul are ID si nume/prenume
-                    medic_choices.append(f"{nume} {prenume} ({mid})")
-        
-        if not medic_choices:
-            # Daca nu sunt medici, returneaza o lista cu un placeholder specific
-            return ["Niciun medic disponibil"]
-        return sorted(medic_choices) # Returneaza lista sortata alfabetic
-
-    def add_consultation_dialog(self):
+    def add_consultation_dialog(self): # Identica cu versiunea corectata anterior
         if self.xml_tree is None and self.json_data is None:
-             messagebox.showwarning("Adaugare Imposibila", "Niciun fisier incarcat.")
-             return
-
+            messagebox.showwarning("Adaugare Imposibila", "Niciun fisier incarcat.")
+            return
         dialog = tk.Toplevel(self.root)
         dialog.title("Adauga Consultatie Noua")
-        dialog.geometry("450x500") # Dimensiune ajustata pentru dialog
+        dialog.geometry("400x450")
         dialog.transient(self.root); dialog.grab_set()
         form_frame = ttk.Frame(dialog, padding="10"); form_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Definim campurile, tipurile lor (entry/combobox) si optiunile specifice
-        # Format: (Textul etichetei, cheia pentru dictionarul de date, tipul widget-ului, dictionar de optiuni)
         field_definitions = [
-            ("ID Pacient (Pxxx):", "id_pacient", "entry", {}),
-            ("Medic:", "id_medic", "combobox", {"get_choices_func": self.get_medic_choices}), # Campul medic este acum un combobox
-            ("Data (YYYY-MM-DD):", "data_consultatie", "entry", {}),
-            ("Ora (HH:MM:SS):", "ora_consultatie", "entry", {}),
-            ("Simptome:", "simptome", "entry", {}),
-            ("Diagnostic Cod (ICD10):", "diagnostic_cod", "entry", {}),
-            ("Diagnostic Descriere:", "diagnostic_descriere", "entry", {}),
-            ("Tratament Indicatii:", "tratament_indicatii", "entry", {})
+            ("ID Pacient (Pxxx):", "id_pacient"), ("ID Medic (Mxxx):", "id_medic"),
+            ("Data (YYYY-MM-DD):", "data_consultatie"), ("Ora (HH:MM:SS):", "ora_consultatie"),
+            ("Simptome:", "simptome"), ("Diagnostic Cod (ICD10):", "diagnostic_cod"),
+            ("Diagnostic Descriere:", "diagnostic_descriere"), ("Tratament Indicatii:", "tratament_indicatii")
         ]
-        entries = {} # Va stoca widget-urile de input (Entry, Combobox)
-        current_row = 0
-        
-        # Mapeaza cheia de date la textul etichetei pentru mesaje de eroare mai bune
-        label_map = {item[1]: item[0] for item in field_definitions}
-
-        # Parcurge definitiile campurilor si creeaza widget-urile corespunzatoare
-        for label_text, key_name, widget_type, options in field_definitions:
-            ttk.Label(form_frame, text=label_text).grid(row=current_row, column=0, sticky="w", padx=5, pady=3)
-            if widget_type == "entry":
-                entry = ttk.Entry(form_frame, width=35)
-                entry.grid(row=current_row, column=1, padx=5, pady=3)
-                entries[key_name] = entry
-            elif widget_type == "combobox": # Cazul special pentru Combobox (medici)
-                choices_func = options.get("get_choices_func")
-                choices = choices_func() if choices_func else ["Eroare: Nu s-au putut incarca optiunile"]
-                
-                combobox = ttk.Combobox(form_frame, width=33, values=choices, state="readonly")
-                if choices: # Verifica daca lista de optiuni nu e goala
-                    # Seteaza prima optiune valida, altfel placeholder-ul din lista
-                    if choices[0] not in ["Niciun medic disponibil", "Eroare: Nu s-au putut incarca optiunile", "Optiuni indisponibile"]:
-                        combobox.current(0) # Selecteaza primul element daca e valid
-                    else:
-                        combobox.set(choices[0]) # Seteaza placeholder-ul (ex: "Niciun medic disponibil")
-                else: # Daca lista e goala din vreun motiv neasteptat
-                    combobox.set("Optiuni indisponibile") # Placeholder pentru caz de eroare
-                
-                combobox.grid(row=current_row, column=1, padx=5, pady=3)
-                entries[key_name] = combobox # Stocheaza referinta la Combobox
-            current_row += 1
-
-        next_id = self.find_next_consultation_id() # Genereaza ID-ul urmatoarei consultatii
-        ttk.Label(form_frame, text=f"ID Consultatie (Automat):").grid(row=current_row, column=0, sticky="w", padx=5, pady=3)
-        ttk.Label(form_frame, text=next_id).grid(row=current_row, column=1, sticky="w", padx=5, pady=3)
-        current_row += 1
-
+        entries = {}
+        for i, (label_text, key_name) in enumerate(field_definitions):
+            ttk.Label(form_frame, text=label_text).grid(row=i, column=0, sticky="w", padx=5, pady=3)
+            entry = ttk.Entry(form_frame, width=35); entry.grid(row=i, column=1, padx=5, pady=3)
+            entries[key_name] = entry
+        next_id = self.find_next_consultation_id()
+        ttk.Label(form_frame, text=f"ID Consultatie (Automat):").grid(row=len(field_definitions), column=0, sticky="w", padx=5, pady=3)
+        ttk.Label(form_frame, text=next_id).grid(row=len(field_definitions), column=1, sticky="w", padx=5, pady=3)
         def submit():
-            new_data = {}
-            valid_submission = True # Flag pentru a verifica validitatea tuturor datelor
-
-            # Extrage datele din widget-uri si valideaza campurile obligatorii
-            for key, widget in entries.items():
-                value = widget.get().strip()
-                is_problematic_choice = False # Flag pentru selectii invalide in Combobox
-
-                if key == "id_medic": # Verificare speciala pentru Combobox-ul medicilor
-                    problematic_values = ["Niciun medic disponibil", "Eroare: Nu s-au putut incarca optiunile", "Optiuni indisponibile"]
-                    if value in problematic_values or not value:
-                        is_problematic_choice = True
-                
-                # Verifica daca un camp (altul decat medic) e gol sau daca selectia medicului e problematica
-                if (not value and key != "id_medic") or is_problematic_choice:
-                    field_label_raw = label_map.get(key, key.replace('_', ' ').title())
-                    field_label = field_label_raw.replace(":", "") # Elimina ':' din eticheta
-                    if key == "id_medic" and is_problematic_choice:
-                        messagebox.showerror("Selectie Invalida", f"Va rugam selectati un {field_label.lower()} valid.", parent=dialog)
-                    else:
-                        messagebox.showerror("Date Incomplete", f"Campul '{field_label}' este obligatoriu!", parent=dialog)
-                    valid_submission = False; break # Opreste procesarea daca un camp e invalid
-                
-                # Proceseaza valoarea daca este valida
-                if key == "id_medic": # Daca este campul medicului (din Combobox)
-                    selected_medic_display = value
-                    # Extrage ID-ul medicului (ex: M001) din textul afisat (ex: Nume Prenume (M001))
-                    match = re.search(r'\((\w+)\)$', selected_medic_display) # Cauta (ID) la sfarsitul string-ului
-                    if not match:
-                        messagebox.showerror("ID Medic Invalid", f"Formatul medicului ('{selected_medic_display}') este invalid. Nu s-a putut extrage ID-ul.", parent=dialog)
-                        valid_submission = False; break
-                    new_data[key] = match.group(1) # Adauga ID-ul extras (ex: "M001")
-                else:
-                    new_data[key] = value # Adauga valoarea direct pentru celelalte campuri de tip 'entry'
-
-            if not valid_submission: return # Nu continua daca au fost erori de validare
-
-            # Validari specifice de format pentru datele extrase
-            if not new_data["id_pacient"].startswith("P"):
-                 messagebox.showerror("ID Invalid", "ID Pacient trebuie sa inceapa cu P.", parent=dialog)
-                 return
-            if not new_data["id_medic"].startswith("M"): # Verifica ID-ul medicului extras
-                 messagebox.showerror("ID Medic Invalid", "ID-ul medicului extras nu incepe cu 'M'. Eroare interna.", parent=dialog)
-                 return
-            try: # Validare format data YYYY-MM-DD
-                parts = new_data["data_consultatie"].split('-')
-                if len(parts) != 3 or not (len(parts[0]) == 4 and len(parts[1]) == 2 and len(parts[2]) == 2): raise ValueError
-                for part in parts: int(part) # Verifica daca sunt numere
-            except ValueError:
+            new_data = {key: widget.get().strip() for key, widget in entries.items()}
+            required_keys = ["id_pacient", "id_medic", "data_consultatie", "ora_consultatie", "simptome", "diagnostic_cod", "diagnostic_descriere", "tratament_indicatii"]
+            for req_key in required_keys:
+                if not new_data.get(req_key):
+                    messagebox.showerror("Date Incomplete", f"Campul '{req_key.replace('_', ' ').title()}' este obligatoriu!", parent=dialog)
+                    return
+            if not new_data["id_pacient"].startswith("P") or not new_data["id_medic"].startswith("M"):
+                messagebox.showerror("ID Invalid", "ID Pacient trebuie sa inceapa cu P, ID Medic cu M.", parent=dialog)
+                return
+            if len(new_data["data_consultatie"].split('-')) != 3: # Validare simpla data
                 messagebox.showerror("Format Data Invalid", "Formatul datei trebuie sa fie YYYY-MM-DD.", parent=dialog)
                 return
-            try: # Validare format ora HH:MM:SS
-                parts = new_data["ora_consultatie"].split(':')
-                if len(parts) != 3 or not (len(parts[0]) == 2 and len(parts[1]) == 2 and len(parts[2]) == 2): raise ValueError
-                for part in parts: int(part) # Verifica daca sunt numere
-            except ValueError:
+            if len(new_data["ora_consultatie"].split(':')) != 3: # Validare simpla ora
                 messagebox.showerror("Format Ora Invalid", "Formatul orei trebuie sa fie HH:MM:SS.", parent=dialog)
                 return
-            
-            # Daca toate validarile trec, adauga consultatia
             self.add_consultation_data(next_id, new_data)
-            dialog.destroy() # Inchide dialogul dupa adaugare
-
+            dialog.destroy()
         submit_button = ttk.Button(form_frame, text="Adauga", command=submit)
-        submit_button.grid(row=current_row, column=0, columnspan=2, pady=15)
+        submit_button.grid(row=len(field_definitions) + 1, column=0, columnspan=2, pady=15)
         dialog.wait_window()
 
-    def add_consultation_data(self, consult_id, data):
+    def add_consultation_data(self, consult_id, data): # Identica
         try:
             if self.xml_tree is not None:
-                consultatii_parent = self.xml_tree.find('.//Consultatii') # Gaseste elementul parinte <Consultatii>
-                if consultatii_parent is None: 
-                    messagebox.showerror("Eroare Structura XML", "Elementul <Consultatii> nu a fost gasit.")
-                    return
-                # Creeaza noul element <Consultatie> si subelementele sale
+                consultatii_parent = self.xml_tree.find('.//Consultatii')
+                if consultatii_parent is None: messagebox.showerror("Eroare Structura XML", "Elementul <Consultatii> nu a fost gasit."); return
                 new_consult = etree.SubElement(consultatii_parent, "Consultatie",
-                                                id_consultatie=consult_id, 
-                                                id_pacient_ref=data["id_pacient"], 
-                                                id_medic_ref=data["id_medic"])
+                                                id_consultatie=consult_id, id_pacient_ref=data["id_pacient"], id_medic_ref=data["id_medic"])
                 etree.SubElement(new_consult, "Data").text = data["data_consultatie"]
                 etree.SubElement(new_consult, "Ora").text = data["ora_consultatie"]
                 etree.SubElement(new_consult, "Simptome").text = data["simptome"]
-                diag = etree.SubElement(new_consult, "Diagnostic")
-                etree.SubElement(diag, "CodICD10").text = data["diagnostic_cod"]
-                etree.SubElement(diag, "Descriere").text = data["diagnostic_descriere"]
-                trat = etree.SubElement(new_consult, "Tratament")
-                etree.SubElement(trat, "Indicatii").text = data["tratament_indicatii"]
-                # Pot fi adaugate si medicamente aici daca se extinde formularul
-                # etree.SubElement(trat, "Medicamente") 
+                diag = etree.SubElement(new_consult, "Diagnostic"); etree.SubElement(diag, "CodICD10").text = data["diagnostic_cod"]; etree.SubElement(diag, "Descriere").text = data["diagnostic_descriere"]
+                trat = etree.SubElement(new_consult, "Tratament"); etree.SubElement(trat, "Indicatii").text = data["tratament_indicatii"]
                 self.populate_all_trees_from_xml() # Reimprospateaza toate tabelele
                 self.update_status(f"Consultatie {consult_id} adaugata (in memorie).")
             elif self.json_data is not None:
-                 consultatii_list = self.json_data.get('clinica', {}).get('consultatii')
-                 if consultatii_list is None: 
-                     messagebox.showerror("Eroare Structura JSON", "Lista 'consultatii' nu a fost gasita.")
-                     return
-                 # Creeaza noul dictionar pentru consultatie
-                 new_consult_dict = {
-                    "id_consultatie": consult_id, 
-                    "id_pacient_ref": data["id_pacient"], 
-                    "id_medic_ref": data["id_medic"],
-                    "data": data["data_consultatie"], 
-                    "ora": data["ora_consultatie"], 
-                    "simptome": data["simptome"],
+                consultatii_list = self.json_data.get('clinica', {}).get('consultatii')
+                if consultatii_list is None: messagebox.showerror("Eroare Structura JSON", "Lista 'consultatii' nu a fost gasita."); return
+                new_consult_dict = {
+                    "id_consultatie": consult_id, "id_pacient_ref": data["id_pacient"], "id_medic_ref": data["id_medic"],
+                    "data": data["data_consultatie"], "ora": data["ora_consultatie"], "simptome": data["simptome"],
                     "diagnostic": {"codICD10": data["diagnostic_cod"], "descriere": data["diagnostic_descriere"]},
-                    "tratament": {"indicatii": data["tratament_indicatii"], "medicamente": []} # Lista goala pentru medicamente
-                 }
-                 consultatii_list.append(new_consult_dict) # Adauga la lista de consultatii
-                 self.populate_all_trees_from_json() # Reimprospateaza toate tabelele
-                 self.update_status(f"Consultatie {consult_id} adaugata (in memorie).")
-            self.save_changes_button.config(state=tk.NORMAL) # Activeaza butonul de salvare
+                    "tratament": {"indicatii": data["tratament_indicatii"], "medicamente": []}
+                }
+                consultatii_list.append(new_consult_dict)
+                self.populate_all_trees_from_json() # Reimprospateaza toate tabelele
+                self.update_status(f"Consultatie {consult_id} adaugata (in memorie).")
+            self.save_changes_button.config(state=tk.NORMAL)
         except Exception as e:
             print(f"Eroare detaliata in add_consultation_data: {traceback.format_exc()}")
             messagebox.showerror("Eroare Adaugare", f"A aparut o eroare la adaugarea consultatiei:\n{e}")
@@ -665,55 +540,46 @@ class ClinicApp:
             self.update_status(f"Consultatia {search_id} nu a fost gasita.")
             return
         self.notebook.select(self.consultatii_tree.master) # Comuta la tab-ul de consultatii
-        self.consultatii_tree.selection_set(search_id) # Selecteaza item-ul
-        self.consultatii_tree.focus(search_id) # Seteaza focusul pe item
-        self.consultatii_tree.see(search_id) # Asigura vizibilitatea item-ului
+        self.consultatii_tree.selection_set(search_id)
+        self.consultatii_tree.focus(search_id)
+        self.consultatii_tree.see(search_id)
         self.update_status(f"Consultatia {search_id} gasita si selectata.")
 
     def delete_consultation(self):
         # Stergerea se face din Treeview-ul de Consultatii
-        selected_items = self.consultatii_tree.selection() # Obtine item-ul selectat
+        # Verifica daca tabul de consultatii este activ pentru a lua selectia corecta (optional, dar bun UX)
+        # Sau, mai simplu, luam selectia doar din consultatii_tree
+        selected_items = self.consultatii_tree.selection()
         if not selected_items:
             messagebox.showwarning("Stergere", "Selectati o consultatie din tabelul 'Consultatii' pentru a o sterge.")
             return
-        
         consult_id_to_delete = selected_items[0] # Presupunem o singura selectie
         if not messagebox.askyesno("Confirmare Stergere", f"Sigur doriti sa stergeti consultatia {consult_id_to_delete}?", parent=self.root):
-             return
-        
-        deleted_successfully = False
+            return
+        deleted = False
         try:
             if self.xml_tree is not None:
-                # Gaseste elementul XML corespunzator si il sterge
-                consult_element_xpath = f'//Consultatie[@id_consultatie="{consult_id_to_delete}"]'
-                consult_elements = self.xml_tree.xpath(consult_element_xpath)
-                if consult_elements:
-                    consult_elements[0].getparent().remove(consult_elements[0])
-                    deleted_successfully = True
-                else: 
-                    messagebox.showerror("Eroare Interna", f"Elementul XML pentru consultatia {consult_id_to_delete} nu a putut fi gasit pentru stergere.")
+                consult_element_xpath_result = self.xml_tree.xpath(f'//Consultatie[@id_consultatie="{consult_id_to_delete}"]')
+                if consult_element_xpath_result:
+                    consult_element_xpath_result[0].getparent().remove(consult_element_xpath_result[0])
+                    deleted = True
+                else: messagebox.showerror("Eroare Interna", f"Elementul XML pentru {consult_id_to_delete} nu a putut fi gasit.")
             elif self.json_data is not None:
-                 consultatii_list = self.json_data.get('clinica', {}).get('consultatii')
-                 if consultatii_list is not None:
+                consultatii_list = self.json_data.get('clinica', {}).get('consultatii')
+                if consultatii_list is not None:
                     initial_len = len(consultatii_list)
-                    # Reconstruieste lista de consultatii fara elementul de sters
                     self.json_data['clinica']['consultatii'] = [c for c in consultatii_list if c.get('id_consultatie') != consult_id_to_delete]
-                    if len(self.json_data['clinica']['consultatii']) < initial_len:
-                        deleted_successfully = True
-                    else:
-                        messagebox.showerror("Eroare Interna", f"Dictionarul JSON pentru consultatia {consult_id_to_delete} nu a putut fi gasit pentru stergere.")
-            
-            if deleted_successfully:
-                 self.consultatii_tree.delete(consult_id_to_delete) # Sterge si din Treeview-ul specific
-                 self.update_status(f"Consultatia {consult_id_to_delete} a fost stearsa (din memorie).")
-                 self.save_changes_button.config(state=tk.NORMAL) # Activeaza butonul de salvare
-            else: 
-                # Acest mesaj ar putea fi redundant daca erorile interne sunt afisate deja
-                self.update_status(f"Stergerea consultatiei {consult_id_to_delete} a esuat (nu a fost gasita in datele sursa).")
+                    if len(self.json_data['clinica']['consultatii']) < initial_len: deleted = True
+                    else: messagebox.showerror("Eroare Interna", f"Dictionarul JSON pentru {consult_id_to_delete} nu a putut fi gasit.")
+            if deleted:
+                self.consultatii_tree.delete(consult_id_to_delete) # Sterge din Treeview-ul specific
+                self.update_status(f"Consultatia {consult_id_to_delete} a fost stearsa (din memorie).")
+                self.save_changes_button.config(state=tk.NORMAL)
+            else: self.update_status(f"Stergerea consultatiei {consult_id_to_delete} a esuat.")
         except Exception as e:
-             print(f"Eroare detaliata in delete_consultation: {traceback.format_exc()}")
-             messagebox.showerror("Eroare Stergere", f"A aparut o eroare la stergerea consultatiei:\n{e}")
-             self.update_status("Eroare la stergere consultatie.")
+            print(f"Eroare detaliata in delete_consultation: {traceback.format_exc()}")
+            messagebox.showerror("Eroare Stergere", f"A aparut o eroare la stergerea consultatiei:\n{e}")
+            self.update_status("Eroare la stergere consultatie.")
 
     def update_status(self, message):
         self.status_label.config(text=f"Status: {message}")
