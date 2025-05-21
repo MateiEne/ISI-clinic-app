@@ -44,7 +44,6 @@
     <td><xsl:value-of select="Diagnostic/CodICD10"/></td>
     <td><xsl:value-of select="Diagnostic/Descriere"/></td>
     <td><xsl:value-of select="Tratament/Indicatii"/></td>
-    <!-- Add more columns if needed, e.g., for medication -->
   </tr>
 </xsl:template>
 

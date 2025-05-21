@@ -1,0 +1,344 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/daniel/ontologies/clinica#"
+     xml:base="http://www.semanticweb.org/daniel/ontologies/clinica"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:clinica="http://www.semanticweb.org/daniel/ontologies/clinica#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica">
+        <rdfs:comment>O ontologie simpla pentru evidenta consultatiilor la o clinica medicala.</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#areCaDiagnostic -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#areCaDiagnostic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Diagnostic"/>
+        <rdfs:comment>O consultatie are ca rezultat un diagnostic.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#areCaTratament -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#areCaTratament">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Tratament"/>
+        <rdfs:comment>O consultatie poate include un tratament.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#efectuataDeMedic -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#efectuataDeMedic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Medic"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#efectueazaConsultatie"/>
+        <rdfs:comment>O consultatie este efectuata de un medic.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#efectueazaConsultatie -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#efectueazaConsultatie">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Medic"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:comment>Un medic efectueaza consultatii.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#estePentruPacient -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#estePentruPacient">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#primesteConsultatie"/>
+        <rdfs:comment>O consultatie este pentru un pacient.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#primesteConsultatie -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#primesteConsultatie">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:comment>Un pacient primeste consultatii.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#codDiagnostic -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#codDiagnostic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Diagnostic"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#dataConsultatie -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#dataConsultatie">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#dataNasterii -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#dataNasterii">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#descriereDiagnostic -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#descriereDiagnostic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Diagnostic"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#idConsultatie -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#idConsultatie">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#idMedic -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#idMedic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Medic"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#idPacient -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#idPacient">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#indicatiiTratament -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#indicatiiTratament">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Tratament"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#numeMedicament -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#numeMedicament">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Medicament"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#numePersoana -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#numePersoana">
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Medic"/>
+                    <rdf:Description rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#oraConsultatie -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#oraConsultatie">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#time"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#prenumePersoana -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#prenumePersoana">
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Medic"/>
+                    <rdf:Description rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#simptome -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#simptome">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#specializareMedic -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#specializareMedic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Medic"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Consultatie">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#efectuataDeMedic"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Medic"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#estePentruPacient"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#areCaDiagnostic"/>
+                <owl:allValuesFrom rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Diagnostic"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#areCaTratament"/>
+                <owl:allValuesFrom rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Tratament"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#idConsultatie"/>
+                <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#dataConsultatie"/>
+                <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+         <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#oraConsultatie"/>
+                <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>Reprezinta o intalnire medicala intre un medic si un pacient.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#Diagnostic -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Diagnostic">
+        <rdfs:comment>Identificarea unei boli sau afectiuni.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#Medic -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Medic">
+        <rdfs:comment>O persoana calificata sa practice medicina.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#Medicament -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Medicament">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/daniel/ontologies/clinica#Tratament"/>
+        <rdfs:comment>O substanta folosita pentru tratarea unei boli.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#Pacient -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Pacient">
+        <rdfs:comment>O persoana care primeste ingrijire medicala.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/daniel/ontologies/clinica#Tratament -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/daniel/ontologies/clinica#Tratament">
+        <rdfs:comment>Ingrijire medicala acordata unui pacient pentru o boala sau rana.</rdfs:comment>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi -->
